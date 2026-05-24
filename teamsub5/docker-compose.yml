@@ -1,0 +1,16 @@
+version: "3.0"
+
+services:
+  frontapp:
+    container_name: frontapp
+    build: ./FrontEnd
+    image: ddaeng0321/frontapp:latest
+    ports:
+      - "8000:5000"
+    depends_on:
+      - backapp
+
+  backapp:
+    container_name: backapp
+    build: ./BackEnd
+    image: ddaeng0321/backapp:latest
