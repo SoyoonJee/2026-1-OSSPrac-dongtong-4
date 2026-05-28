@@ -1,0 +1,61 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKERHUB_REPO = 'ddaeng0321/team4-dongtong'
+        IMAGE_TAG = "${BUILD_NUMBER}"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/CSID-DGU/2026-1-OSSPrac-dongtong-4.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                dir('teamsub6') {
+                    bat '''
+                    docker build -t %DOCKERHUB_REPO%:latest ./FrontEnd
+                    docker tag %DOCKERHUB_REPO%:latest %DOCKERHUB_REPO%:%IMAGE_TAG%
+                    docker images
+                    '''
+                }
+            }
+        }
+
+        stage('Login to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-credentials',
+                    usernameVariable: 'DOCKERHUB_USERNAME',
+                    passwordVariable: 'DOCKERHUB_PASSWORD'
+                )]) {
+                    bat '''
+                    echo %DOCKERHUB_PASSWORD% | docker login -u %DOCKERHUB_USERNAME% --password-stdin
+                    '''
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                bat '''
+                docker push %DOCKERHUB_REPO%:latest
+                docker push %DOCKERHUB_REPO%:%IMAGE_TAG%
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline build and Docker Hub push completed successfully.'
+        }
+        failure {
+            echo 'Pipeline build failed. Check Jenkins console log.'
+        }
+    }
+}

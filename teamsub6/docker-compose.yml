@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  web:
+    image: ddaeng0321/team4-dongtong:latest
+    container_name: team6-dongtong-web
+    ports:
+      - "5000:5000"
+    restart: always
