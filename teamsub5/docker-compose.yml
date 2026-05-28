@@ -1,16 +1,9 @@
-version: "3.0"
+version: "3.8"
 
 services:
-  frontapp:
-    container_name: frontapp
-    build: ./FrontEnd
-    image: ddaeng0321/frontapp:latest
+  web:
+    image: ddaeng0321/team4-dongtong:latest
+    container_name: team6-dongtong-web
     ports:
-      - "8000:5000"
-    depends_on:
-      - backapp
-
-  backapp:
-    container_name: backapp
-    build: ./BackEnd
-    image: ddaeng0321/backapp:latest
+      - "5000:5000"
+    restart: always
